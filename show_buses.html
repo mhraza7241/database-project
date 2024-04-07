@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Show Buses</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .back-button {
+      margin-bottom: 20px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+  </style>
+</head>
+<body>
+  <button class="back-button" onclick="goBack()">&#8592; Back</button>
+  <div class="container">
+    <h2>Buses Information</h2>
+    <table>
+      <thead>
+        <tr>
+          
+          <th>Name</th>
+          <th>Route</th>
+          <th>Bus No</th>
+          <th>Capacity</th>
+          <th>Driver Name</th>
+          <th>Driver ID</th>
+        </tr>
+      </thead>
+      <tbody id="bus-table-body">
+        <!-- Bus data will be inserted here dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+
+    fetch('http://127.0.0.1:5000/buses')
+      .then(response => response.json())
+      .then(data => {
+        const tableBody = document.getElementById('bus-table-body');
+        data.forEach(bus => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            
+            <td>${bus.Name}</td>
+            <td>${bus.Route}</td>
+            <td>${bus.BusNo}</td>
+            <td>${bus.Capacity}</td>
+            <td>${bus.DriverName}</td>
+            <td>${bus.DriverId}</td>
+          `;
+          tableBody.appendChild(row);
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  </script>
+</body>
+</html>

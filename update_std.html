@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enroll</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .back-button {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    select {
+      padding: 10px;
+      margin-bottom: 20px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    button[type="button"] {
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: #dc3545;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      justify-content: center;
+    }
+
+    button[type="button"]:hover {
+      background-color: #c82333;
+      
+    }
+  </style>
+</head>
+<body>
+  <button class="back-button" onclick="goBack()">&#8592; Back</button>
+  <div class="container">
+    <h2>Enroll in a Bus</h2>
+    <form id="delete-bus-form">
+      <label for="bus-name">Select Bus Name:</label>
+      <select id="bus-name" name="bus-name" onchange="getBusData()">
+        <!-- Options will be inserted here dynamically -->
+      </select>
+      <ul id="bus-details">
+        <!-- Bus details will be inserted here dynamically -->
+      </ul>
+      <button type="button" onclick="enroll()">Update</button>
+    </form>
+  </div>
+
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+
+    
+
+    function getBusData() {
+      const selectedBusName = document.getElementById('bus-name').value;
+      if (!selectedBusName) {
+        return;
+      }
+
+      fetch('http://127.0.0.1:5000/enrollg')
+        .then(response => response.json())
+        .then(data => {
+          const selectedBus = data[0];
+            const busDetailsList = document.getElementById('bus-details');
+            busDetailsList.innerHTML = ''; // Clear existing details
+            for (const [key, value] of Object.entries(selectedBus)) {
+              if (key !== 'id') { // Exclude ID from being displayed
+                const listItem = document.createElement('li');
+                listItem.textContent = `${key}: ${value}`;
+                busDetailsList.appendChild(listItem);
+              }
+            }
+          }
+        )
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+    
+    }
+    fetch('http://127.0.0.1:5000/buses')
+      .then(response => response.json())
+      .then(data => {
+        const busNameSelect = document.getElementById('bus-name');
+        data.forEach(bus => {
+          const option = document.createElement('option');
+          option.text = bus.Name;
+          option.value = bus.Name;
+          busNameSelect.appendChild(option);
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+    
+      function enroll(){
+        const Busname= document.getElementById('bus-name').value
+      fetch('http://127.0.0.1:5000/updatebus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ Busname })
+                    
+                })
+                .catch(error => {
+                console.error('Error updating bus data:', error);
+                alert('Failed to update bus data');});
+                alert('Updated Successfully');
+                window.location.href="user.html";
+                
+      }
+      
+    
+  </script>
+</body>
+</html>

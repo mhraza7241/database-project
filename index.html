@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>University Bus Management System - Login</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column; /* Align elements vertically */
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 50%; /* Set the width to cover half of the page */
+      max-width: 400px; /* Limit the maximum width */
+    }
+
+    .toggle {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .toggle button {
+      border: none;
+      background: none;
+      cursor: pointer;
+      padding: 5px 15px;
+      font-size: 16px;
+    }
+
+    .toggle button.active {
+      font-weight: bold;
+    }
+
+    .login-form {
+      display: none;
+    }
+
+    .login-form h2 {
+      margin-bottom: 10px;
+    }
+
+    .login-form input,
+    .login-form button {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .login-form button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    .login-form button:hover {
+      background-color: #0056b3;
+    }
+
+    .signup-link {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .signup-link a {
+      color: #007bff;
+      text-decoration: none;
+      border-bottom: 1px solid #007bff;
+    }
+
+    .signup-link a:hover {
+      color: #0056b3;
+      border-bottom-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="title">University Bus Management System</div>
+  <div class="container">
+    <div class="toggle">
+      <button class="active" id="admin-toggle">Administrator</button>
+      <button id="user-toggle">User</button>
+    </div>
+    <form id="admin-login" class="login-form">
+      <h2>Administrator Login</h2>
+      <input type="text" placeholder="Username" required>
+      <input type="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+    <form id="user-login" class="login-form">
+      <h2>User Login</h2>
+      <input type="text" placeholder="username" required>
+      <input type="password" placeholder="Password" required>
+      <button  type="button" onclick="signUp()">Login</button>
+      <div class="signup-link">
+        <a href="signup.html">If not already Registered? Sign Up</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const adminToggle = document.getElementById('admin-toggle');
+    const userToggle = document.getElementById('user-toggle');
+    const adminForm = document.getElementById('admin-login');
+    const userForm = document.getElementById('user-login');
+
+    adminToggle.addEventListener('click', () => {
+      adminToggle.classList.add('active');
+      userToggle.classList.remove('active');
+      adminForm.style.display = 'block';
+      userForm.style.display = 'none';
+    });
+
+    userToggle.addEventListener('click', () => {
+      userToggle.classList.add('active');
+      adminToggle.classList.remove('active');
+      userForm.style.display = 'block';
+      adminForm.style.display = 'none';
+    });
+
+    adminForm.addEventListener('submit', (event) => {
+      event.preventDefault(); // Prevent form submission
+      
+      // Get username and password values
+      const username = adminForm.querySelector('input[type="text"]').value;
+      const password = adminForm.querySelector('input[type="password"]').value;
+      
+      // Check if username and password match "admin"
+      if (username === 'admin' && password === 'admin') {
+        // Navigate to the administrator page
+        window.location.href = 'administrator.html';
+      } else {
+        // Alert for incorrect username or password
+        alert('Incorrect username or password');
+      }
+    });
+
+    function signUp() {
+      const username = userForm.querySelector('input[type="text"]').value;
+      const password = userForm.querySelector('input[type="password"]').value;
+      
+
+    // Make a request to your API to fetch user data
+    fetch('http://127.0.0.1:5000/login')
+        .then(response => response.json())
+        .then(data => {
+            // Check if the username and password match any user in the API data
+            const matchedUser = data.find(user => user.StudentID === username && user.Password === password);
+
+            if (matchedUser) {
+                // Make a request to your backend to verify the user credentials
+                fetch('http://127.0.0.1:5000/check', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                })
+                .catch(error => {
+                console.error('Error updating bus data:', error);
+                alert('Failed to update bus data');});
+                alert('Sign-in Successful')
+                window.location.href = 'user.html';
+
+              }
+                else {
+                alert('Invalid username or password. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching user data:', error);
+            alert('Failed to fetch user data. Please try again.');
+        });
+}
+  </script>
+</body>
+</html>
